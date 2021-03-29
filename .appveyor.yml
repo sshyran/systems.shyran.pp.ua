@@ -1,0 +1,126 @@
+version: '1.0.0.0.{branch}.{build}'
+    
+image:
+    - Ubuntu
+    - Visual Studio 2017    
+    
+max_jobs: 1    
+    
+configuration:    
+    - Debug
+#    - Release
+    
+environment:
+#    global:
+    variable1: bash
+#   build: off     # MSbuild svc goes off
+    
+    stack:
+      node 14
+      go
+      ruby 2.4.3
+      jdk 1.8
+      python 3.6
+      docker
+    
+for:    
+-
+    matrix:
+      only:
+        - image: Ubuntu    
+    
+branches:    
+    only:
+      - html.branch     
+    
+only_commits:    
+#   message: /build/        # Start a new build if message contains 'build' 
+    author: s.shyran@gmail.com    
+    
+pull_requests:    
+    do_not_increment_build_number: true    
+    
+#
+# fast interrupt the build if any sequential job fails, e.g. if job/script returns non-zero exit code
+#
+
+#    variable1: 
+#    variable2:
+#    variable3:
+#    my_variable:
+#      secure: <encrypt_value>
+#
+    
+services:
+#    - mssql2014           # start SQL Server 2014 Express
+    - mysql   
+    - mongodb 
+    - docker
+    
+install:
+#    - sh: sudo apt-get update
+     - sh: sudo install nvm
+     - sh: rvm install ruby-2.4.3     
+     - sh: rvm install gem gh-pages    
+#     - sh: sudo rvm install ...
+# 
+    
+test_script:
+    - docker run hello-world
+#   - sh: sudo ...
+#   - cmd: ECHO this i$ fancy testy win .cmd line to display    
+#   - ps: ...
+#   - pwsh: ...
+# ....
+# - 4 spaces from left border!
+#
+# Use "build: off" to disable MSBuild mode
+# build: off
+    
+cache:
+    - _source    
+    
+build_script:    
+    - echo Ubuntu build script goes well    
+    
+#allow_failures:
+#    - platform: Any CPU
+#      configuration: Debug
+#    - platform: x64
+#      configuration: Release
+    
+build:    
+#    parallel: true                 # enable MSBuild parallel builds
+#    project: MyTestAzureCS.sln      # path to Visual Studio solution or project
+     publish_wap: true               # package Web Application Projects (WAP) for Web Deploy
+     publish_wap_xcopy: true         # package Web Application Projects (WAP) for XCopy deployment
+     publish_wap_beanstalk: true     # Package Web Applications for AWS Elastic Beanstalk deployment
+     publish_wap_octopus: true       # Package Web Applications for Octopus deployment
+     publish_azure_webjob: true      # Package Azure WebJobs for Zip Push deployment
+     publish_azure: true             # package Azure Cloud Service projects and push to artifacts
+#    publish_aspnet_core: true       # Package ASP.NET Core projects
+#    publish_core_console: true      # Package .NET Core console projects
+     verbosity: detailed    
+
+# fast_finish: true    
+
+#hosts:    
+#
+#     localhost: 127.0.0.1
+#     shyransystems.github.io: 185.199.110.153    
+#     cdn-185-199-110-153.github.com: - cdn where shyransystems master records are stored 
+#     shyransystems.github.io host IP: 185.199.110.153 - differs on per user/repo basis, check WHOIS for every account!
+# host: cdn-185-199-110-153.github.com
+# GitHub - 185.199.110.0/24
+
+deploy:    
+# Deploy to GitHub Releases
+-
+     provider: GitHub
+#        draft: true
+#        prerelease: true
+    
+# on_success:    
+#    - sh: >-
+
+
